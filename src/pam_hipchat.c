@@ -65,7 +65,6 @@ int hipchat_send_message(char *server, char *auth_token, char *from, bool notify
         /* 5 is the longer of "true" and "false" */
         int post_len = strlen(post_format)+strlen(auth_token)+strlen(from)+strlen(message)+5;
         post_data = malloc(post_len*sizeof(char));
-        
         if(post_data == NULL){
             return -1;
         }
@@ -77,6 +76,7 @@ int hipchat_send_message(char *server, char *auth_token, char *from, bool notify
         res = curl_easy_perform(curl);
         /* Check for errors */ 
         if(res != CURLE_OK){
+            //TODO: Log message here
             curl_easy_cleanup(curl);
             return -1;
         }
@@ -84,6 +84,7 @@ int hipchat_send_message(char *server, char *auth_token, char *from, bool notify
         /* always cleanup */ 
         curl_easy_cleanup(curl);
     } else {
+        //TODO: Log message here
         return -1;
     }
     
@@ -105,15 +106,14 @@ PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
 PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
                                           int argc, const char **argv) {
 
-
     char *server;
     char *dirty_token;
     char *token;
     char *auth_token;
     char *from = "PAM Login";
-    int debug=0;
-    int no_warn=0;
-    int no_verify_ssl=0;
+    bool debug=false;
+    bool no_warn=false;
+    bool no_verify_ssl=false;
     bool notify=false;
     
     /* root logged into server01 from server 02 */
@@ -131,7 +131,12 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
     /* parse module args */
     int i=0;
     for(i=0; i<argc; i++){
+        //argv[] is a const char* and strtok modifies the original string
+        //so we strdup so we can modify the string and free it at the end.
         char *term = strdup(argv[i]);
+        
+        //NULL here means that the token '=' was not detected in the string
+        //therefore we look at the whole string as the token.
         dirty_token = strtok(term, "=");
         if(dirty_token == NULL){
             token = term;
@@ -139,6 +144,9 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
             token = trim(dirty_token);
         }
         
+        
+        //the second call to strtok with the first arg as NULL means 'give me the
+        //next part of the tokenized string'
         if(strcmp(token,"server")==0){
             server = strdup(strtok(NULL,"="));
         }else if(strcmp(token,"auth_token")==0){
@@ -146,48 +154,59 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
         }else if(strcmp(token,"from")==0){
             from = strdup(strtok(NULL,"="));
         }else if(strcmp(token,"debug")==0){
-            debug=1;
+            //not used yet
+            debug=true;
         }else if(strcmp(token,"no_warn")==0){
-            no_warn=1;
+            //not used yet
+            no_warn=true;
         }else if(strcmp(token,"no_verify_ssl")==0){
-            no_verify_ssl=1;
+            //not used yet
+            no_verify_ssl=true;
         }else if(strcmp(token,"notify")==0){
             notify=true;
+        }/*else{
+          //TODO: Log message here  
         }
         
+        */
         free(term);
     }
     
+    
+    //TODO: pan_get_item returns a lot of other things
+    //  we should react in a more nuanced way.
     if(pam_get_item(pamh, PAM_USER, (const void **) &username) != PAM_SUCCESS){
+        //TODO: Log message here
         username = default_user;
     }
 
     if(pam_get_item(pamh, PAM_RHOST, (const void **) &rhost) != PAM_SUCCESS){
+        //TODO: Log message here
         rhost = default_rhost;
     }
     
     if(gethostname(hostname, 255) != 0){
+        //TODO: Log message here
         strncpy(hostname, default_hostname, 255);
     }
 
     int message_len = strlen(username)+strlen(rhost)+strlen(hostname)+strlen(message_format);
-
     message = malloc(message_len*sizeof(char));
     if(message == NULL){
         /* alloc failed */
+        //TODO: Log message here
         return PAM_SESSION_ERR;
     }
-    
     snprintf(message, message_len, message_format, username, hostname, rhost);
 
     int hipchat_ret = hipchat_send_message(server, auth_token, from, notify, message);
     if(hipchat_ret != 0){
+        //TODO: log message here
         free(message);
         return PAM_SESSION_ERR;
     }
 
     free(message);
-    
     return PAM_SUCCESS;
                                               
 }
