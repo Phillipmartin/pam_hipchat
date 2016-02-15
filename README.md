@@ -27,15 +27,17 @@ The full list of config items is:
 
    * server=        the URL to the notification API for the room you want
    * auth_token=    the room notification authentication token
-   * notify         wheather or not to notify the room with the mesage
+   * notify         wheather or not to notify the room with the mesage (if you include this option, notification will happen, if you don't it won't)
    * from=          the username to use when the notification happens.  If this needs to include a space you need to enclose the whole thing in brackets, a la [from=PAM Notifier]
 
 The actual notification is currently hard coded.  You can change it in the code if you really need to.
 
 ## Future Plans
 
-   * Add a way to template the notification
+   * Add a sane way to template the notification
+   * add message color option
    * Add the ability to use a hipchat card instead of just text
    * better debugging and warning
    * respect PAM_SILENT (although we don't log anything right now...so I guess we sort of already do?)
    * Add tests
+   * Build/publish RPM and DEB as well as example puppet and chef configs
