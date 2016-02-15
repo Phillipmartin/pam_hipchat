@@ -21,7 +21,7 @@ cp pam_hipchat.so /lib/security/
 
 This module is meant to be used as a session module.  That ensures that the user in question has been authenticated and authorized.  I suggest you configure it in the specific service configs that you want to notify, not in common-session or the like.  Adding a like like the below to 'ssh' or 'login', etc will work just fine.
 
-session        optional pam_hipchat.so server=https://<your team>.hipchat.com/v2/room/&lt;room ID or name&gt;/notification auth_token=<room auth token>
+session        optional pam_hipchat.so server=https://&lt;your team&gt;.hipchat.com/v2/room/&lt;room ID or name&gt;/notification auth_token=&lt;room auth token&gt;
 
 The full list of config items is:
 
