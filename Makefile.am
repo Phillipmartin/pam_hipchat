@@ -1,0 +1,7 @@
+AUTOMAKE_OPTIONS = foreign no-dependencies
+
+SUBDIRS = src
+
+EXTRA_DIST = LICENSE README.md
+
+ACLOCAL_AMFLAGS = -I m4
