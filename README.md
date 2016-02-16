@@ -6,16 +6,13 @@ This module sends a notification to a hipchat room after a successful login.
 
 ## Build
 
-Pre-build, you need to install the curl dev packages.
-
-   * gcc -fPIC -fno-stack-protector -c src/pam_hipchat.c
-   * ld -lcurl -x --shared -o pam_hipchat.so pam_hipchat.o
+   * autoreconf -i  (to generate the autoconf files)
+   * ./configure (installs to /lib/security, use --with-pam-dir=DIR to change that)
+   * make
 
 ## Install
 
-This will depend somewhat on your distro's config but something like:
-
-sudo cp pam_hipchat.so /lib/security/
+   * sudo make install
 
 ## Configure
 
