@@ -106,10 +106,10 @@ PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
 PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
                                           int argc, const char **argv) {
 
-    char *server;
-    char *dirty_token;
-    char *token;
-    char *auth_token;
+    char *server = NULL;
+    char *dirty_token = NULL;
+    char *token = NULL;
+    char *auth_token = NULL;
     char *from = "PAM Login";
     bool debug=false;
     bool no_warn=false;
@@ -118,10 +118,10 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
     
     /* root logged into server01 from server 02 */
     const char *message_format = "%s logged into %s from %s";
-    char *message;
+    char *message = NULL;
  
-    const char* username;
-    const char* rhost;
+    const char* username = NULL;
+    const char* rhost = NULL;
     char hostname[255];
     
     const char *default_hostname = "(unknown hostname)";
@@ -170,6 +170,11 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
         
         */
         free(term);
+    }
+    
+    if(server == NULL || auth_token == NULL){
+        //TODO: Log message here
+        return PAM_SESSION_ERR;
     }
     
     
