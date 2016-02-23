@@ -63,7 +63,8 @@ int hipchat_send_message(char *server, char *auth_token, char *from, bool notify
         curl_easy_setopt(curl, CURLOPT_URL, server);
 
         /* 5 is the longer of "true" and "false" */
-        int post_len = strlen(post_format)+strlen(auth_token)+strlen(from)+strlen(message)+5;
+        /* +1 for the null terminator */
+        int post_len = strlen(post_format)+strlen(auth_token)+strlen(from)+strlen(message)+5+1;
         post_data = malloc(post_len*sizeof(char));
         if(post_data == NULL){
             return -1;
@@ -195,7 +196,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
         strncpy(hostname, default_hostname, 255);
     }
 
-    int message_len = strlen(username)+strlen(rhost)+strlen(hostname)+strlen(message_format);
+    //+1 for the null terminator
+    int message_len = strlen(username)+strlen(rhost)+strlen(hostname)+strlen(message_format)+1;
     message = malloc(message_len*sizeof(char));
     if(message == NULL){
         /* alloc failed */
